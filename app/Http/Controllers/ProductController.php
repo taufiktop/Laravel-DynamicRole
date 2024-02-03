@@ -6,34 +6,26 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
+use App\Service\ResponseJsonService;
 
 class ProductController extends Controller
 {
+    private $responseJsonService;
+    private $auth;
+
+    public function __construct(ResponseJsonService $responseJsonService, Auth $auth)
+    {
+        $this->responseJsonService = $responseJsonService;
+        $this->auth = $auth;
+    }
+
     public function index()
     {
         try {
             $data=Product::all();
-            if(count($data)>0) {
-                return response()->json(array(
-                    'OUT_STAT' => 'T',
-                    'OUT_MESS' => 'Success',
-                    'OUT_DATA' => $data,
-                    'TOTAL_DATA' => count($data)
-                ), 200);
-            }
-            else {
-                return response()->json(array(
-                    'OUT_STAT' => 'T',
-                    'OUT_MESS' => 'Success',
-                    'OUT_DATA' => [],
-                    'TOTAL_DATA' => count($data)
-                ), 200);
-            }
+            return $this->responseJsonService->success($data);
         } catch (\Throwable $th) {
-            return response()->json(array(
-                'OUT_STAT' => 'F',
-                'OUT_MESS' => 'Error'
-            ), 500);
+            return $this->responseJsonService->failed('Error');
         }
         
     }
@@ -44,27 +36,9 @@ class ProductController extends Controller
             $auth = Auth::guard();
 
             $data=Product::where('admin_id', $auth->user()->id)->get();
-            if(count($data)>0) {
-                return response()->json(array(
-                    'OUT_STAT' => 'T',
-                    'OUT_MESS' => 'Success',
-                    'OUT_DATA' => $data,
-                    'TOTAL_DATA' => count($data)
-                ), 200);
-            }
-            else {
-                return response()->json(array(
-                    'OUT_STAT' => 'T',
-                    'OUT_MESS' => 'Success',
-                    'OUT_DATA' => [],
-                    'TOTAL_DATA' => count($data)
-                ), 200);
-            }
+            return $this->responseJsonService->success($data);
         } catch (\Throwable $th) {
-            return response()->json(array(
-                'OUT_STAT' => 'F',
-                'OUT_MESS' => 'Error'
-            ), 500);
+            return $this->responseJsonService->failed('Error');
         }
         
     }
@@ -101,10 +75,7 @@ class ProductController extends Controller
                 $result = 3;
             }
         } catch (\Throwable $th) {
-            return response()->json(array(
-                'OUT_STAT' => 'F',
-                'OUT_MESS' => 'Error'
-            ), 500);
+            return $this->responseJsonService->failed('Error');
         }
 
         if($result == 1){
@@ -157,10 +128,7 @@ class ProductController extends Controller
                 $result = 3;
             }
         } catch (\Throwable $th) {
-            return response()->json(array(
-                'OUT_STAT' => 'F',
-                'OUT_MESS' => 'Error'
-            ), 500);
+            return $this->responseJsonService->failed('Error');
         }
 
         if($result == 1){
@@ -213,10 +181,7 @@ class ProductController extends Controller
             }
 
         } catch (\Throwable $th) {
-            return response()->json(array(
-                'OUT_STAT' => 'F',
-                'OUT_MESS' => 'Error'
-            ), 500);
+            return $this->responseJsonService->failed('Error');
         }
            
     }
