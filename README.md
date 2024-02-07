@@ -66,10 +66,6 @@ php artisan db:seed
 php artisan serve
 ```
 
-## API Collection Postman
-
-https://api.postman.com/collections/13003053-a9db0cd0-ef37-48cf-8699-efda028407f7?access_key=PMAT-01HNKZDBB1RY5YAT5VNK2RCQAW
-
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
