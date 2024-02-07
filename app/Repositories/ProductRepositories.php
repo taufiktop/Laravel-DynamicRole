@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
