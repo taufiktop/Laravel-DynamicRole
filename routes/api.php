@@ -22,21 +22,23 @@ Route::middleware('api')->group(function () {
     Route::post('/login', 'Auth\AuthController@login')->name('login'); //login for all
     Route::post('/register', 'Auth\AuthController@register')->name('register'); //register for client
 
-    Route::middleware('jwt.verify:admin,client')->group(function() {
+    Route::middleware('jwt.verify')->group(function() {
         Route::get('/user-info', 'Auth\AuthController@me');
         Route::post('/logout', 'Auth\AuthController@logout');
-        Route::post('/get-product-admin', 'ProductController@getListByAdmin'); //get product by admin
-    });
 
-    Route::middleware('jwt.verify:admin')->group(function() {
+        // Product
+        Route::get('/get-product', 'ProductController@index'); //get all product by client
+        Route::post('/get-product-admin', 'ProductController@getListByAdmin'); //get product by admin
         Route::post('/add-product', 'ProductController@create'); //get all product for client
         Route::post('/update-product', 'ProductController@edit');
         Route::post('/delete-product', 'ProductController@delete');
-    });
 
-    Route::middleware('jwt.verify:client')->group(function() {
-        Route::get('/get-product', 'ProductController@index');
-
+        // Role
+        Route::post('/get-role', 'UserManagement\RoleController@index');
+        Route::post('/add-role', 'UserManagement\RoleController@create');
+        Route::post('/update-role', 'UserManagement\RoleController@update');
+        Route::post('/delete-role', 'UserManagement\RoleController@delete');
+        
         //Cart
         Route::get('/get-cart', 'CartController@index');
         Route::post('/add-cart', 'CartController@create');
@@ -50,8 +52,48 @@ Route::middleware('api')->group(function () {
         Route::post('/checkout-order', 'OrderController@checkout');
         Route::post('/payment-order', 'OrderController@payment');
 
+
         //....
-        
     });
+
+
+    // Route::middleware('jwt.verify:super-admin,client')->group(function() {
+    //     Route::get('/user-info', 'Auth\AuthController@me');
+    //     Route::post('/logout', 'Auth\AuthController@logout');
+    //     Route::post('/get-product-admin', 'ProductController@getListByAdmin'); //get product by admin
+    // });
+
+    // Route::middleware('jwt.verify:super-admin')->group(function() {
+    //     Route::post('/add-product', 'ProductController@create'); //get all product for client
+    //     Route::post('/update-product', 'ProductController@edit');
+    //     Route::post('/delete-product', 'ProductController@delete');
+
+    //     // Role
+    //     Route::get('/get-role', 'UserManagement\RoleController@index');
+    //     Route::post('/add-role', 'UserManagement\RoleController@create');
+    //     Route::post('/update-role', 'UserManagement\RoleController@update');
+    //     Route::post('/delete-role', 'UserManagement\RoleController@delete');
+    // });
+
+    // Route::middleware('jwt.verify:client')->group(function() {
+    //     Route::get('/get-product', 'ProductController@index');
+
+    //     //Cart
+    //     Route::get('/get-cart', 'CartController@index');
+    //     Route::post('/add-cart', 'CartController@create');
+    //     Route::post('/update-cart', 'CartController@edit');
+    //     Route::post('/delete-cart', 'CartController@delete');
+
+    //     //Order
+    //     Route::get('/get-order', 'OrderController@index');
+    //     Route::post('/add-order', 'OrderController@create');
+    //     Route::post('/cancel-order', 'OrderController@cancel');
+    //     Route::post('/checkout-order', 'OrderController@checkout');
+    //     Route::post('/payment-order', 'OrderController@payment');
+
+
+    //     //....
+        
+    // });
     
 });

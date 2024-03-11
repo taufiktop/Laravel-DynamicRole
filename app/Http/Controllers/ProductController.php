@@ -16,26 +16,31 @@ class ProductController extends Controller
 
     public function index()
     {
+        $this->middleware(['role:client']);
         return $this->productRepositories->getAllData();
     }
 
     public function getListByAdmin()
     {
+        $this->middleware(['permission:read product']);
         return $this->productRepositories->getDataByAdmin();
     }
 
     public function create(Request $req)
     {
+        $this->middleware(['permission:create product']);
         return $this->productRepositories->addData($req);
     }
 
     public function edit(Request $req)
     {
+        $this->middleware(['permission:update product']);
         return $this->productRepositories->updateData($req);
     }
 
     public function delete(Request $req)
     {
+        $this->middleware(['permission:delete product']);
         return $this->productRepositories->deleteData($req);  
     }
 }

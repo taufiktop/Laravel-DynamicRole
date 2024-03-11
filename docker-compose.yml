@@ -1,0 +1,47 @@
+version: '3'
+services:
+  laravel:
+    build:
+      args:
+        user: taufik123
+        uid: 1000
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - .:/var/www/html/laravel
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    working_dir: /var/www/html/laravel
+    environment:
+      DB_HOST: localhost
+      DB_DATABASE: marketplace
+      DB_USERNAME: taufik123
+      DB_PASSWORD: taufik123
+      DB_PORT: 3306
+    networks:
+      - laravel_network
+
+  web:
+    image: nginx:latest
+    volumes:
+      - .:/var/www/html/laravel
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx-logs:/var/log/nginx
+    container_name: laravel-nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - laravel
+    networks:
+      - laravel_network
+
+networks:
+  laravel_network:
+    driver: bridge
+
+      
