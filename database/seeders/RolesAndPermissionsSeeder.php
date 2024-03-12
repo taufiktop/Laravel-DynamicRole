@@ -43,7 +43,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Loop through the array and create each permission
         foreach ($permissions as $permissionName) {
-            Permission::create(['name' => $permissionName]);
+            Permission::updateOrCreate(['name' => $permissionName]);
         }
 
         // Set super admin permissions

@@ -12,29 +12,28 @@ class OrderController extends Controller
     public function __construct(OrderRepositories $orderRepositories)
     {
         $this->orderRepositories = $orderRepositories;
+        $this->middleware(['permission:read orders']);
+        $this->middleware(['permission:create orders'])->only('create');
+        $this->middleware(['permission:update orders'])->only('cancel','checkout');
     }
 
     public function index ()
     {
-        $this->middleware(['permission:read order']);
         return $this->orderRepositories->getData();
     }
 
     public function create (Request $req)
     {
-        $this->middleware(['permission:create order']);
         return $this->orderRepositories->addData($req);
     }
 
     public function cancel (Request $req)
     {
-        $this->middleware(['permission:update order']);
         return $this->orderRepositories->cancelData($req);
     }
 
     public function checkout (Request $req)
     {
-        $this->middleware(['permission:update order']);
         return $this->orderRepositories->checkoutData($req);
     }
 }

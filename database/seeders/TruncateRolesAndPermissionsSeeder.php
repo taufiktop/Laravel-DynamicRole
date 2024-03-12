@@ -24,6 +24,8 @@ class TruncateRolesAndPermissionsSeeder extends Seeder
         DB::table('roles')->truncate();
         DB::table('permissions')->truncate();
         DB::table('role_has_permissions')->truncate();
+        // DB::table('users')->truncate();
+        // DB::table('role_user')->truncate();
 
         // Enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1');

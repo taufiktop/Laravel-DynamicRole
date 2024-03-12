@@ -30,9 +30,9 @@ class Handler extends ExceptionHandler
         // Spatie Exception
         $this->renderable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
             return response()->json([
-                'responseMessage' => 'You do not have the required authorization.',
-                'responseStatus'  => 403,
-            ]);
+                'OUT_MESS' => 'You do not have the required authorization.',
+                'OUT_STAT'  => 403,
+            ],403);
         });
     }
 }

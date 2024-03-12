@@ -35,6 +35,7 @@ Route::middleware('api')->group(function () {
 
         // Role
         Route::post('/get-role', 'UserManagement\RoleController@index');
+        Route::post('/get-detail-role', 'UserManagement\RoleController@detail');
         Route::post('/add-role', 'UserManagement\RoleController@create');
         Route::post('/update-role', 'UserManagement\RoleController@update');
         Route::post('/delete-role', 'UserManagement\RoleController@delete');
@@ -55,45 +56,5 @@ Route::middleware('api')->group(function () {
 
         //....
     });
-
-
-    // Route::middleware('jwt.verify:super-admin,client')->group(function() {
-    //     Route::get('/user-info', 'Auth\AuthController@me');
-    //     Route::post('/logout', 'Auth\AuthController@logout');
-    //     Route::post('/get-product-admin', 'ProductController@getListByAdmin'); //get product by admin
-    // });
-
-    // Route::middleware('jwt.verify:super-admin')->group(function() {
-    //     Route::post('/add-product', 'ProductController@create'); //get all product for client
-    //     Route::post('/update-product', 'ProductController@edit');
-    //     Route::post('/delete-product', 'ProductController@delete');
-
-    //     // Role
-    //     Route::get('/get-role', 'UserManagement\RoleController@index');
-    //     Route::post('/add-role', 'UserManagement\RoleController@create');
-    //     Route::post('/update-role', 'UserManagement\RoleController@update');
-    //     Route::post('/delete-role', 'UserManagement\RoleController@delete');
-    // });
-
-    // Route::middleware('jwt.verify:client')->group(function() {
-    //     Route::get('/get-product', 'ProductController@index');
-
-    //     //Cart
-    //     Route::get('/get-cart', 'CartController@index');
-    //     Route::post('/add-cart', 'CartController@create');
-    //     Route::post('/update-cart', 'CartController@edit');
-    //     Route::post('/delete-cart', 'CartController@delete');
-
-    //     //Order
-    //     Route::get('/get-order', 'OrderController@index');
-    //     Route::post('/add-order', 'OrderController@create');
-    //     Route::post('/cancel-order', 'OrderController@cancel');
-    //     Route::post('/checkout-order', 'OrderController@checkout');
-    //     Route::post('/payment-order', 'OrderController@payment');
-
-
-    //     //....
-        
-    // });
     
 });

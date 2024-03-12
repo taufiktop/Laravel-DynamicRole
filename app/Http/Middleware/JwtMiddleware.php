@@ -42,8 +42,10 @@ class JwtMiddleware extends BaseMiddleware
         }
         //If user was authenticated successfully and user is in one of the acceptable roles, send to next request.
         // if ($user && in_array($user->role, $roles)) {
+        if ($user) {
             return $next($request);
-        // }
+
+        }
         
 
         return $this->unauthorized();

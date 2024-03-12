@@ -18,7 +18,7 @@ This is monolith service for client and admin with specific authentication.
 
 
 ## Requirements
-- Laravel 10.x (PHP 8.1)
+- Laravel 10.x (PHP 8.2)
 - Composer 2.4.3
 
 
@@ -28,7 +28,7 @@ This is monolith service for client and admin with specific authentication.
 Open your terminal, go to the directory that you will install this project, then run the following command:
 
 ```bash
-git clone https://github.com/taufiktop/Basic-Marketplace-API.git
+git clone https://github.com/taufiktop/Laravel-DynamicRole.git
 ```
 
 ### Package Installation

@@ -13,31 +13,31 @@ class CartController extends Controller
     {
         $this->cartRepositories = $cartRepositories;
         $this->middleware(['role:client']);
+        $this->middleware(['permission:read carts']);
+        $this->middleware(['permission:create carts'])->only('create');
+        $this->middleware(['permission:update carts'])->only('edit');
+        $this->middleware(['permission:delete carts'])->only('delete');
     }
 
     public function index ()
     {
-        $this->middleware(['permission:read cart']);
         return $this->cartRepositories->getDataByClient();
     }
 
     public function create(Request $req)
     {
-        $this->middleware(['permission:create cart']);
         return $this->cartRepositories->addData($req);
     }
 
 
     public function edit (Request $req) 
     {
-        $this->middleware(['permission:update cart']);
         return $this->cartRepositories->updateData($req);
     }
 
 
     public function delete(Request $req)
     {
-        $this->middleware(['permission:delete cart']);
         return $this->cartRepositories->deleteData($req);
     }
 }

@@ -13,12 +13,22 @@ class RoleController extends Controller
     public function __construct(RoleRepositories $roleRepositories)
     {
         $this->roleRepositories = $roleRepositories;
+        $this->middleware(['permission:read roles']);
+        $this->middleware(['permission:create roles'])->only('create');
+        $this->middleware(['permission:update roles'])->only('update');
+        $this->middleware(['permission:delete roles'])->only('delete');
     }
 
     public function index(Request $req)
     {
         return $this->roleRepositories->getRole($req);
     }
+
+    public function detail(Request $req)
+    {
+        return $this->roleRepositories->getDetailRole($req);
+    }
+
     public function create(Request $req)
     {
         return $this->roleRepositories->addRole($req);
