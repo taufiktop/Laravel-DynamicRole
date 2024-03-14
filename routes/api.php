@@ -39,14 +39,21 @@ Route::middleware('api')->group(function () {
         Route::post('/add-role', 'UserManagement\RoleController@create');
         Route::post('/update-role', 'UserManagement\RoleController@update');
         Route::post('/delete-role', 'UserManagement\RoleController@delete');
+
+        // Permission
+        Route::get('/get-permission', 'UserManagement\PermissionController@getAllPermissions');
+        Route::post('/add-permission', 'UserManagement\PermissionController@create');
+        Route::post('/update-permission', 'UserManagement\PermissionController@update');
+        Route::post('/delete-permission', 'UserManagement\PermissionController@delete');
+        Route::post('/user-role-permission', 'UserManagement\PermissionController@userWithRoleAndPermissios');
         
-        //Cart
+        // Cart
         Route::get('/get-cart', 'CartController@index');
         Route::post('/add-cart', 'CartController@create');
         Route::post('/update-cart', 'CartController@edit');
         Route::post('/delete-cart', 'CartController@delete');
 
-        //Order
+        // Order
         Route::get('/get-order', 'OrderController@index');
         Route::post('/add-order', 'OrderController@create');
         Route::post('/cancel-order', 'OrderController@cancel');
@@ -54,7 +61,7 @@ Route::middleware('api')->group(function () {
         Route::post('/payment-order', 'OrderController@payment');
 
 
-        //....
+        // ....
     });
     
 });

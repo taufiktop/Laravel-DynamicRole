@@ -5,8 +5,10 @@ namespace App\Repositories;
 use Illuminate\Database\QueryException;
 use App\Service\ResponseJsonService;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 
 class RoleRepositories
 {
@@ -47,41 +49,80 @@ class RoleRepositories
 
     public function addRole ($req)
     {
-        $req->validate([
-            'name' => 'required',
-            'permissionId' => 'required|array|min:1'
-        ]);
+        try {
+            $req->validate([
+                'name' => 'required',
+                'permissionId' => 'required|array|min:1'
+            ]);
+    
+            DB::beginTransaction();
 
-        Role::create(['name' => $req->name]);
-        $permissions = Permission::whereIn('id', $req->permissionId)->get();
-        $role->syncPermissions($permissions);
+            $role = Role::create(['name' => $req->name]);
+            $permissions = Permission::whereIn('id', $req->permissionId)->get();
+            $role->givePermissionTo($permissions);
 
-        return $this->responseJsonService->success();
+            DB::commit();
+    
+            return $this->responseJsonService->success();
+        // } catch (\Illuminate\Validation\ValidationException $th) {
+        //     return $this->responseJsonService->failed($th->validator->errors());
+        } catch (\Exception $e) {
+            // If an exception occurs, rollback the transaction
+            DB::rollBack();
+            return $this->responseJsonService->failed($e->getMessage());
+        }
+        
     }
 
     public function updateRole ($req)
     {
-        $req->validate([
-            'id' => 'required',
-            'name' => 'required',
-            'permissionId' => 'required|array|min:1'
-        ]);
+        try {
+            $req->validate([
+                'id' => 'required',
+                'name' => 'required',
+                'permissionId' => 'required|array|min:1'
+            ]);
 
-        Role::where('id',$req->id)->update(['name' => $req->name]);
-        $permissions = Permission::whereIn('id', $req->permissionId)->get();
-        $role->syncPermissions($permissions);
+            DB::beginTransaction();
+    
+            $role = Role::findOrFail($req->id);
+            $role->name = $req->name;
+            $role->save();
 
-        return $this->responseJsonService->success();
+            $permissions = Permission::whereIn('id', $req->permissionId)->get();
+            $role->syncPermissions($permissions);
+
+            DB::commit();
+    
+            return $this->responseJsonService->success();
+        } catch (\Exception $e) {
+            // If an exception occurs, rollback the transaction
+            DB::rollBack();
+            return $this->responseJsonService->failed($e->getMessage());
+        }
     }
 
     public function deleteRole ($req)
     {
-        $req->validate([
-            'id' => 'required'
-        ]);
+        try {
+            $req->validate([
+                'id' => 'required'
+            ]);
 
-        $data = Role::where('id',$req->id)->delete();
-        return $this->responseJsonService->success();
+            DB::beginTransaction();
+    
+            $role = Role::findOrFail($req->id);
+            $role->revokePermissionTo($role->permissions);
+            $role->delete();
+
+            DB::commit();
+
+            return $this->responseJsonService->success();
+        } catch (\Exception $e) {
+            // If an exception occurs, rollback the transaction
+            DB::rollBack();
+            return $this->responseJsonService->failed($e->getMessage());
+        }
     }
 
     public function checkHasPermissions()
@@ -95,15 +136,28 @@ class RoleRepositories
         }
     }
 
-    public function userWithRoleAndPermissios()
+    public function userWithRoleAndPermissios($req)
     {
-        $superAdminRole = Role::where('name', 'super-admin')->first();
-        $superAdmin = User::where('name', 'Super Admin')->first();
-        $superAdmin->assignRole($superAdminRole);
+        try {
+            $req->validate([
+                'id' => 'required'
+            ]);
 
-        $user = User::find(1);
-        $user->load('permissions');
+            $user = User::find($req->id);
+            $user->load('permissions');
 
-        return $user;
+            if($user)
+            {
+                $data = [$user];
+            }
+            else
+            {
+                $data = [];
+            }
+
+            return $this->responseJsonService->success($data);
+        } catch (\Exception $e) {
+            return $this->responseJsonService->failed($e->getMessage());
+        }
     }
 }
