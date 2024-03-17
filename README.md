@@ -49,6 +49,8 @@ edit .env, set according to database name, user and password
 ```bash
 php artisan key:generate
 
+php artisan jwt:secret
+
 php artisan config:cache
 ```
 
