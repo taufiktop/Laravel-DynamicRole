@@ -1,0 +1,10 @@
+@import "tailwindcss/base";
+
+@import "tailwindcss/components";
+@import "buttons";
+@import "form";
+@import "base";
+
+@import "tailwindcss/utilities";
+
+@import "tailwindcss/screens";

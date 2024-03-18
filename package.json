@@ -1,13 +1,41 @@
 {
     "private": true,
-    "type": "module",
     "scripts": {
-        "dev": "vite",
-        "build": "vite build"
+        "dev": "npm run development",
+        "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "watch": "npm run development -- --watch",
+        "watch-poll": "npm run watch -- --watch-poll",
+        "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "prod": "npm run production",
+        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "devDependencies": {
-        "axios": "^1.6.4",
-        "laravel-vite-plugin": "^1.0.0",
-        "vite": "^5.0.0"
+        "@tailwindcss/custom-forms": "^0.2.1",
+        "axios": "^0.19",
+        "cross-env": "^5.1",
+        "laravel-mix": "^5.0.9",
+        "purgecss": "^3.0.0",
+        "vue": "^2.6.14",
+        "vue-template-compiler": "^2.6.14"
+    },
+    "dependencies": {
+        "@inertiajs/inertia": "^0.6.3",
+        "@inertiajs/inertia-vue": "^0.4.2",
+        "@inertiajs/progress": "^0.2.2",
+        "@mathieustan/vue-datepicker": "^0.2.11",
+        "@vue/composition-api": "^1.4.9",
+        "element-ui": "^2.15.6",
+        "postcss-import": "12.0.1",
+        "tailwindcss": "1.8.13",
+        "vee-validate": "^3.4.5",
+        "vue-clickaway": "^2.2.2",
+        "vue-cryptojs": "^2.2.1",
+        "vue-meta": "^2.4.0",
+        "vue-recaptcha": "^2.0.1",
+        "vue-tabs-with-active-line": "^1.2.6",
+        "vue-toastification": "^1.7.8",
+        "vue2-daterange-picker": "^0.6.8",
+        "vue2-editor": "^2.10.3",
+        "xlsx": "^0.17.4"
     }
 }
