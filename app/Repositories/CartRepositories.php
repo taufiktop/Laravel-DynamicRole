@@ -24,7 +24,7 @@ class CartRepositories
             $auth = Auth::guard();
             $data = DB::table('carts')
                 ->join('products', 'carts.product_code', '=', 'products.code')
-                ->where('client_id', $auth->user()->id)
+                ->where('client_uuid', $auth->user()->uuid)
                 ->get();
 
             return $this->responseJsonService->success($data);
@@ -44,7 +44,7 @@ class CartRepositories
             $data= new Cart();
             $auth = Auth::guard();
 
-            $data->client_id = $auth->user()->id;
+            $data->client_uuid = $auth->user()->uuid;
             $data->product_code = $req ->product_code;
             $data->quantity = $req->quantity;
 
@@ -92,11 +92,11 @@ class CartRepositories
     {
         try {
             $req->validate([
-                'id' => 'required',
+                'uuid' => 'required',
                 'quantity' => 'required'
             ]);
 
-            $data = Cart::where('id',$req->id);    
+            $data = Cart::where('uuid',$req->uuid);    
             $result = $data->update(array(
                 'quantity' => $req->quantity
             ));
@@ -119,10 +119,10 @@ class CartRepositories
     {
         try {
             $req->validate([
-                'id' => 'required'
+                'uuid' => 'required'
             ]);
 
-            $data = Cart::where('id',$req->id);
+            $data = Cart::where('uuid',$req->uuid);
             $result = $data->delete();
 
             if($result>0){

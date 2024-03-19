@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('uuid')->primary()->unique();
             $table->string('code')->unique();
             $table->string('name');
             $table->binary('image');
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('description');
             $table->integer('stock');
             $table->integer('sold_out_quantity');
-            $table->string('admin_id');
+            $table->string('admin_uuid');
             $table->timestamps();
         });
     }

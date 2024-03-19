@@ -6,8 +6,11 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use App\Models\Role;
+use App\Models\Permission;
+// use Spatie\Permission\Models\Role;
+// use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -38,8 +41,8 @@ class UserSeeder extends Seeder
         $superAdmin->assignRole($superAdminRole);
 
         DB::table('role_user')->insert([
-            'user_id' => $superAdmin->id,
-            'role_id' => $superAdminRole->id
+            'user_uuid' => $superAdmin->uuid,
+            'role_uuid' => $superAdminRole->uuid
         ]);
     }
 }

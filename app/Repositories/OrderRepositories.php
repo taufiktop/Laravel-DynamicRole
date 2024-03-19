@@ -26,7 +26,7 @@ class OrderRepositories
         try {
             $auth = Auth::guard();
             
-            $data=Order::where('client_id', $auth->user()->id)
+            $data=Order::where('client_uuid', $auth->user()->uuid)
                 ->where('payment_status', 0)
                 ->orderBy('created_at', 'DESC')
                 ->get();
@@ -48,7 +48,7 @@ class OrderRepositories
 
             $dataByProduct = DB::table('products')
                     ->whereIn('code', $arrayProductCode)
-                    ->select('id', 'code', 'name', 'stock', 'price')
+                    ->select('uuid', 'code', 'name', 'stock', 'price')
                     ->get();
 
             $flagReadyStock = true;
@@ -85,22 +85,22 @@ class OrderRepositories
                 //     ]
                 // );
 
-                $data->client_id = $auth->user()->id;
+                $data->client_uuid = $auth->user()->uuid;
                 $data->total_amount = $totalAmount;
                 $data->admin_fee = $adminFee; //default 1000
                 $data->virtual_number = rand(100,999) . time();
                 $data->payment_status = 0; //0 untuk menunggu pembayaran
                 $data->save();
-                $id = $data->id;
+                $uuid = $data->uuid;
 
-                if($id)
+                if($uuid)
                 {
                     for($i=0; $i<count($order); $i++)
                     {
                         
                         $data = new OrderDetail();
-                        $data->order_id = $id;
-                        $data->product_id = $dataByProduct[$i]->id;
+                        $data->order_uuid = $uuid;
+                        $data->product_id = $dataByProduct[$i]->uuid;
                         $data->product_code = $order[$i]['product_code'];
                         $data->product_name = $dataByProduct[$i]->name;
                         $data->quantity = $order[$i]['quantity'];
@@ -131,12 +131,12 @@ class OrderRepositories
     {
         try {
             $req->validate([
-                'id' => 'required'
+                'uuid' => 'required'
             ]);
 
             $data= new Order();
 
-            $data = Order::where('id',$req->id);    
+            $data = Order::where('uuid',$req->uuid);    
             $result = $data->update(array(
                 'payment_status' => 1 // flag 1 is cancel
             ));
@@ -159,12 +159,12 @@ class OrderRepositories
     {
         try {
             $req->validate([
-                'id' => 'required'
+                'uuid' => 'required'
             ]);
 
             $data= new Order();
 
-            $dataOrder = $data->where('id',$req->id)->get();
+            $dataOrder = $data->where('uuid',$req->uuid)->get();
 
             if(count($dataOrder) == 1)
             {
@@ -182,9 +182,9 @@ class OrderRepositories
                     //Start Check stock
                     $auth = Auth::guard();
                     $dataOrderDetail = DB::table('orders')
-                        ->join('order_details', 'orders.id', '=', 'order_details.order_id')
-                        ->where('client_id', $auth->user()->id)
-                        ->where('orders.id', $req->id)
+                        ->join('order_details', 'orders.uuid', '=', 'order_details.order_uuid')
+                        ->where('client_uuid', $auth->user()->uuid)
+                        ->where('orders.uuid', $req->uuid)
                         ->get();
 
                     $arrayProductCodeOrder = [];
@@ -195,7 +195,7 @@ class OrderRepositories
 
                     $dataByProduct = DB::table('products')
                             ->whereIn('code', $arrayProductCodeOrder)
-                            ->select('id', 'code', 'name', 'stock', 'price', 'sold_out_quantity')
+                            ->select('uuid', 'code', 'name', 'stock', 'price', 'sold_out_quantity')
                             ->get();
 
                     $flagReadyStock = true;

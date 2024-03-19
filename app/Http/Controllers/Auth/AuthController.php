@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -89,6 +90,8 @@ class AuthController extends Controller
                 'password' => 'required'
             ]);
 
+            DB::beginTransaction();
+
             $data= new User();
             $data->role = $req ->role;
             $data->name = $req->name;
@@ -98,11 +101,14 @@ class AuthController extends Controller
 
             $result = $data->save();
 
+            DB::commit();
+
             return response()->json([
                 'OUT_STAT' => 'S',
                 'OUT_MESS' => 'Successfully register'
             ]);
         } catch (\Throwable $th) {
+            DB::rollback();
             return response()->json(array(
                 'OUT_STAT' => 'F',
                 'OUT_MESS' => 'Error'

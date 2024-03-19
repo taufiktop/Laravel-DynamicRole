@@ -32,7 +32,7 @@ class ProductRepositories
     {
         try {
             $auth = Auth::guard();
-            $data = Product::where('admin_id', $auth->user()->id)->get();
+            $data = Product::where('admin_uuid', $auth->user()->uuid)->get();
 
             return $this->responseJsonService->success($data);
         } catch (\Throwable $th) {
@@ -59,7 +59,7 @@ class ProductRepositories
             $data->description = $req->description;
             $data->stock = $req->stock;
             $data->sold_out_quantity = 0;
-            $data->admin_id = $auth->user()->id;
+            $data->admin_uuid = $auth->user()->uuid;
             $data->image = $req->image;
 
             $result = $data->save();
@@ -90,14 +90,14 @@ class ProductRepositories
     {
         try {
             $req->validate([
-                'id' => 'required',
+                'uuid' => 'required',
                 'code' => 'required',
                 'price' => 'required',
                 'description' => 'required',
                 'stock' => 'required'
             ]);
 
-            $data = Product::where('id',$req->id);    
+            $data = Product::where('uuid',$req->uuid);    
             $result = $data->update(array(
                 'code' => $req->code,
                 'name' => $req->name,
@@ -137,10 +137,10 @@ class ProductRepositories
     {
         try {
             $req->validate([
-                'id' => 'required'
+                'uuid' => 'required'
             ]);
 
-            $data = Product::where('id',$req->id);
+            $data = Product::where('uuid',$req->uuid);
             $data = $data->delete();
 
             if($data>0){

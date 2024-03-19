@@ -4,12 +4,14 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Service\ResponseJsonService;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+// use Spatie\Permission\Models\Permission;
+// use Spatie\Permission\Models\Role;
+use App\Models\Role;
+use App\Models\Permission;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
-class CreatePermissions extends Command
+class CreatePermission extends Command
 {
     /**
      * The name and signature of the console command.
@@ -51,7 +53,7 @@ class CreatePermissions extends Command
 
             $this->info("Permission '{$name}' created successfully!");
         } catch (\Exception $e) {
-            $this->info($e->getMessage());;
+            $this->info($e->getMessage());
         }
     }
 }

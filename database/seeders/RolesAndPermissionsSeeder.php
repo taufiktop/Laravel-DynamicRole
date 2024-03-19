@@ -3,8 +3,11 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+// use Spatie\Permission\Models\Role;
+// use Spatie\Permission\Models\Permission;
+use App\Models\Role;
+use App\Models\Permission;
+use Illuminate\Support\Str;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -43,11 +46,17 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Loop through the array and create each permission
         foreach ($permissions as $permissionName) {
-            Permission::updateOrCreate(['name' => $permissionName]);
+            Permission::updateOrCreate([
+                'name' => $permissionName,
+                // 'uuid'   => (string)Str::uuid(),
+            ]);
         }
 
         // Set super admin permissions
-        $role = Role::updateOrCreate(['name' => 'super-admin'])
+        $role = Role::updateOrCreate([
+                'name' => 'super-admin',
+                // 'uuid'   => (string)Str::uuid(),
+        ])
             ->givePermissionTo(Permission::all());
     }
 }

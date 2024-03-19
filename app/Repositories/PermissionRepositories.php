@@ -61,12 +61,12 @@ class PermissionRepositories
     {
         try {
             $req->validate([
-                'id'    => 'required',
+                'uuid'    => 'required',
                 'name'  => 'required'
             ]);
 
             DB::beginTransaction();
-            Permission::where('id',$req->id)->update(['name' => $req->name]);
+            Permission::where('uuid',$req->uuid)->update(['name' => $req->name]);
             DB::commit();
 
             return $this->responseJsonService->success();
@@ -79,12 +79,12 @@ class PermissionRepositories
     {
         try {
             $req->validate([
-                'id'    => 'required'
+                'uuid'    => 'required'
             ]);
 
             DB::beginTransaction();
 
-            $permission = Permission::findOrFail($req->id);
+            $permission = Permission::findOrFail($req->uuid);
             // Remove the permission from all roles
             $roles = Role::all();
             foreach ($roles as $role) {

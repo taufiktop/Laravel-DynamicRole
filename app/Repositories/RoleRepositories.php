@@ -4,8 +4,10 @@ namespace App\Repositories;
 
 use Illuminate\Database\QueryException;
 use App\Service\ResponseJsonService;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+// use Spatie\Permission\Models\Role;
+// use Spatie\Permission\Models\Permission;
+use App\Models\Role;
+use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
@@ -21,30 +23,42 @@ class RoleRepositories
 
     public function getRole ($req)
     {
-        $req->validate([
-            'page' => 'required|integer'
-        ]);
-        $data = Role::paginate(10, ['*'], 'page', $req->page);
-        return $this->responseJsonService->success($data);
+        try {
+            $req->validate([
+                'page' => 'required|integer'
+            ]);
+            $data = Role::paginate(10, ['*'], 'page', $req->page);
+
+            return $this->responseJsonService->success($data);
+        } catch (\Exception $e) {
+            // If an exception occurs, rollback the transaction
+            return $this->responseJsonService->failed($e->getMessage());
+        }
+        
     }
 
     public function getDetailRole ($req)
     {
-        $req->validate([
-            'roleId' => 'required'
-        ]);
-
-        $role = Role::with('permissions')->find($req->roleId);;
-        if($role)
-        {
-            $data = [$role->load('permissions')];
+        try {
+            $req->validate([
+                'roleUuid' => 'required'
+            ]);
+    
+            $role = Role::with('permissions')->find($req->roleUuid);;
+            if($role)
+            {
+                $data = [$role->load('permissions')];
+            }
+            else
+            {
+                $data = [];
+            }
+    
+            return $this->responseJsonService->success($data);
+        } catch (\Exception $e) {
+            // If an exception occurs, rollback the transaction
+            return $this->responseJsonService->failed($e->getMessage());
         }
-        else
-        {
-            $data = [];
-        }
-
-        return $this->responseJsonService->success($data);
     }
 
     public function addRole ($req)
@@ -52,13 +66,13 @@ class RoleRepositories
         try {
             $req->validate([
                 'name' => 'required',
-                'permissionId' => 'required|array|min:1'
+                'permissionUuid' => 'required|array|min:1'
             ]);
     
             DB::beginTransaction();
 
             $role = Role::create(['name' => $req->name]);
-            $permissions = Permission::whereIn('id', $req->permissionId)->get();
+            $permissions = Permission::whereIn('uuid', $req->permissionUuid)->get();
             $role->givePermissionTo($permissions);
 
             DB::commit();
@@ -140,14 +154,14 @@ class RoleRepositories
     {
         try {
             $req->validate([
-                'id' => 'required'
+                'uuid' => 'required'
             ]);
 
-            $user = User::find($req->id);
-            $user->load('permissions');
+            $user = User::find($req->uuid);
 
             if($user)
             {
+                $user->load('permissions');
                 $data = [$user];
             }
             else
