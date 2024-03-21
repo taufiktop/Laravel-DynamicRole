@@ -21,6 +21,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('api')->group(function () {
     Route::post('/login', 'Auth\AuthController@login')->name('login'); //login for all
     Route::post('/register', 'Auth\AuthController@register')->name('register'); //register for client
+    Route::post('/send-otp', 'Otp\OtpController@sendOtp')->name('send-otp'); 
+    Route::post('/verify-otp', 'Otp\OtpController@verifyOtp')->name('verify-otp'); 
+    Route::get('/refresh', 'Auth\AuthController@refresh'); //refresh token
 
     Route::middleware('jwt.verify')->group(function() {
         Route::get('/user-info', 'Auth\AuthController@me');
@@ -59,6 +62,13 @@ Route::middleware('api')->group(function () {
         Route::post('/cancel-order', 'OrderController@cancel');
         Route::post('/checkout-order', 'OrderController@checkout');
         Route::post('/payment-order', 'OrderController@payment');
+
+        // User
+        Route::post('/get-user', 'UserManagement\UserController@index');
+        Route::post('/get-detail-user', 'UserManagement\UserController@detail');
+        Route::post('/add-user', 'UserManagement\UserController@create');
+        // Route::post('/update-user', 'UserManagement\UserController@update');
+        // Route::post('/delete-user', 'UserManagement\UserController@delete');
 
 
         // ....

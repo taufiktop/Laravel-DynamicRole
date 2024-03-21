@@ -31,4 +31,34 @@ class ResponseJsonService
             'OUT_MESS' => $message
         ), 500);
     }
+
+    public function sucess1($message = 'sucess')
+    {
+        return response()->json(array(
+            'items' => $data,
+            'page_size' => 10,
+            'page'  => 1,
+            'total' => 120
+        ), 200);
+    }
+
+    public function sucess2($message = 'sucess')
+    {
+        return response()->json(array(
+            'items' => $data,
+            'page_size' => 10,
+            'page'  => 1,
+            'total' => 120
+        ), 200);
+    }
+
+    public function error($message = 'error')
+    {
+        return response()->json(array(
+            'error' => [
+                'code' => 'SY-401',
+                'message'  => 1
+            ]
+        ), 500);
+    }
 }

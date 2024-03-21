@@ -9,6 +9,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Service\ResponseJsonService;
 
 class AuthController extends Controller
 {
@@ -17,9 +18,16 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    // public function __construct()
+    // {
+    //     // $this->middleware('auth:api', ['except' => ['login']]);
+    // }
+
+    private $responseJsonService;
+
+    public function __construct(ResponseJsonService $responseJsonService)
     {
-        // $this->middleware('auth:api', ['except' => ['login']]);
+        $this->responseJsonService = $responseJsonService;
     }
 
     /**
@@ -121,9 +129,13 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function refresh()
+    public function refresh(Request $request)
     {
-        return $this->respondWithToken($this->guard()->refresh());
+        try {
+            return $this->respondWithToken($this->guard()->refresh());
+        } catch (\Exception $e) {
+            return $this->responseJsonService->failed($e->getMessage());
+        }
     }
 
     /**
@@ -140,13 +152,15 @@ class AuthController extends Controller
         // Decode the token
         // $token = 'your_jwt_token_here';
         // $user = JWTAuth::toUser($token);
-
+        // Generate a refresh token
+        // $refreshToken = JWTAuth::refresh($token);
 
         return response()->json([
             'OUT_STAT' => 'S',
             'OUT_MESS' => 'Success',
             'OUT_DATA' => [
                 'access_token' => $token,
+                // 'refresh_token' => $refreshToken,
                 'token_type' => 'bearer',
                 'expires_in' => $this->guard()->factory()->getTTL() * 60,
                 // 'users' => $user

@@ -15,7 +15,8 @@ return new class extends Migration
             $table->uuid('uuid')->primary()->unique();
             $table->string('code')->unique();
             $table->string('name');
-            $table->binary('image');
+            // $table->binary('image');
+            $table->longText('image')->charset('binary');
             $table->string('price');
             $table->text('description');
             $table->integer('stock');
