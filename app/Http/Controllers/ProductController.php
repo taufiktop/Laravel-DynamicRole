@@ -12,11 +12,16 @@ class ProductController extends Controller
     public function __construct(ProductRepositories $productRepositories)
     {
         $this->productRepositories = $productRepositories;
-        $this->middleware(['role:client'])->only('index');
-        $this->middleware(['permission:read products'])->except('index');
-        $this->middleware(['permission:create products'])->only('create');
-        $this->middleware(['permission:update products'])->only('edit');
-        $this->middleware(['permission:delete products'])->only('delete');
+        // $this->middleware(['role:client'])->only('index');
+        // $this->middleware(['permission:read products'])->except('index');
+        // $this->middleware(['permission:create products'])->only('create');
+        // $this->middleware(['permission:update products'])->only('edit');
+        // $this->middleware(['permission:delete products'])->only('delete');
+    }
+
+    public function getMenu()
+    {
+        return $this->productRepositories->getMenu();
     }
 
     public function index()

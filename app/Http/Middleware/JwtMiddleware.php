@@ -25,18 +25,18 @@ class JwtMiddleware extends BaseMiddleware
         } catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
                 return response()->json([
-                    'OUT_STAT' => 'F',
-                    'OUT_MESS' => 'Token is Invalid'
+                    'status' => 'SY-401',
+                    'message' => 'Token is Invalid'
                 ],401);
-            }else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
+            } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
                 return response()->json([
-                    'OUT_STAT' => 'F',
-                    'OUT_MESS' => 'Token is Expired'
+                    'status' => 'SY-401',
+                    'message' => 'Token is Expired'
                 ],401);
-            }else{
+            } else{
                 return response()->json([
-                    'OUT_STAT' => 'F',
-                    'OUT_MESS' => 'Authorization Token not found'
+                    'status' => 'SY-401',
+                    'message' => 'Authorization Token not found'
                 ],401);
             }
         }
@@ -53,8 +53,8 @@ class JwtMiddleware extends BaseMiddleware
 
     private function unauthorized($message = null){
         return response()->json([
-            'OUT_STAT' => 'F',
-            'OUT_MESS' => $message ? $message : 'You are unauthorized to access this resource'
+            'status' => 'SY-401',
+            'message' => $message ? $message : 'You are unauthorized to access this resource'
         ], 401);
     }
 }

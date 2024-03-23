@@ -42,7 +42,7 @@ class OtpRepositories
 
             return $this->responseJsonService->success();
         } catch (\Exception $e) {
-            return $this->responseJsonService->failed($e->getMessage());
+            return $this->responseJsonService->failed($e->getMessage(), $e->getStatusCode());
         }
     }
 
@@ -56,7 +56,7 @@ class OtpRepositories
         $user = User::where('phone_number', $req->phone_number)
             ->where('otp', $req->otp);
             
-        if ($user) {
+        if ($user->first()) {
             // OTP is valid
             if($userFirst = $user->where('otp_expired_at', '>=', now())->first())
             {
@@ -74,15 +74,13 @@ class OtpRepositories
 
     protected function respondWithToken($token)
     {
-        return response()->json([
-            'OUT_STAT' => 'S',
-            'OUT_MESS' => 'Success',
-            'OUT_DATA' => [
-                'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => $this->guard()->factory()->getTTL() * 60,
-            ]
+        $data = array([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => $this->guard()->factory()->getTTL() * 60,
         ]);
+
+        return $this->responseJsonService->success($data);
     }
 
     public function guard()

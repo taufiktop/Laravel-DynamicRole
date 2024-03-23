@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class JsonResponseApi
+class ResponseApiMiddleware
 {
     /**
      * Handle an incoming request.

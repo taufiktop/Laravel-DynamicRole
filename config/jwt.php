@@ -120,7 +120,7 @@ return [
     |
     */
 
-    'refresh_ttl' => env('JWT_REFRESH_TTL', 2),
+    'refresh_ttl' => env('JWT_REFRESH_TTL', 5),
 
     /*
     |--------------------------------------------------------------------------
@@ -272,7 +272,8 @@ return [
         |
         */
 
-        'jwt' => Tymon\JWTAuth\Providers\JWT\Lcobucci::class,
+        'jwt' => Tymon\JWTAuth\Providers\JWT\Lcobucci::class, 
+        // 'jwt' => Tymon\JWTAuth\Providers\JWT\Namshi::class,
 
         /*
         |--------------------------------------------------------------------------
