@@ -8,9 +8,17 @@ use JWTAuth;
 use Exception;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 use Tymon\JWTAuth\JWT;
+use App\Service\ResponseJsonService;
 
 class JwtMiddleware extends BaseMiddleware
 {
+    private $responseJsonService;
+
+    public function __construct(ResponseJsonService $responseJsonService)
+    {
+        $this->responseJsonService = $responseJsonService;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -24,37 +32,23 @@ class JwtMiddleware extends BaseMiddleware
             $user = JWTAuth::parseToken()->authenticate();
         } catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
-                return response()->json([
-                    'status' => 'SY-401',
-                    'message' => 'Token is Invalid'
-                ],401);
+                return $this->responseJsonService->failed('Token is Invalid',401);
             } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
-                return response()->json([
-                    'status' => 'SY-401',
-                    'message' => 'Token is Expired'
-                ],401);
+                return $this->responseJsonService->failed('Token is Expired',401);
             } else{
-                return response()->json([
-                    'status' => 'SY-401',
-                    'message' => 'Authorization Token not found'
-                ],401);
+                return $this->responseJsonService->failed('Authorization Token not found',401);
             }
         }
-        //If user was authenticated successfully and user is in one of the acceptable roles, send to next request.
-        // if ($user && in_array($user->role, $roles)) {
+
         if ($user) {
             return $next($request);
 
         }
         
-
         return $this->unauthorized();
     }
 
-    private function unauthorized($message = null){
-        return response()->json([
-            'status' => 'SY-401',
-            'message' => $message ? $message : 'You are unauthorized to access this resource'
-        ], 401);
+    private function unauthorized(){
+        return $this->responseJsonService->failed('Authorization Token not found',401);
     }
 }

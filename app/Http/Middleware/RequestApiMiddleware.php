@@ -5,9 +5,17 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Service\ResponseJsonService;
 
 class RequestApiMiddleware
 {
+    private $responseJsonService;
+
+    public function __construct(ResponseJsonService $responseJsonService)
+    {
+        $this->responseJsonService = $responseJsonService;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -17,7 +25,7 @@ class RequestApiMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $API_KEY = 'Password1!';
+        $API_KEY = config('app.API_KEY');
         $preventAttack = [
             'Content-Type' => 'application/json',
             'X-Content-Type-Options'=>'nosniff',
@@ -27,10 +35,7 @@ class RequestApiMiddleware
         ];
         
         if($API_KEY != $request->header('APIKey')){
-            return response()->json(array(
-                'status' => 'SY-401',
-                'message' => 'Invalid Key'
-            ), 401);
+            return $this->responseJsonService->failed('Invalid Key',401);
         }
 
         if($preventAttack['Content-Type'] != $request->header('Content-Type')
@@ -39,10 +44,7 @@ class RequestApiMiddleware
             || $preventAttack['Strict-Transport-Security'] != $request->header('Strict-Transport-Security')
             || $preventAttack['X-Frame-Options'] != $request->header('X-Frame-Options')
         ) {
-            return response()->json(array(
-                'status' => 'SY-403',
-                'message' => 'Forbidden'
-            ), 403);
+            return $this->responseJsonService->failed('Forbidden',403);
         }
 
         return $next($request);
