@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Sentry;
+use Sentry\State\Scope;
 
 class Handler extends ExceptionHandler
 {
@@ -27,5 +29,18 @@ class Handler extends ExceptionHandler
             //
         });
 
+    }
+
+    public function report(Throwable $e)
+    {
+        if ($this->shouldReport($e)) {
+            Sentry::withScope(function (Scope $scope) use ($e) {
+                $scope->setExtra('exception_message', $e->getMessage());
+                $scope->setExtra('exception_code', $e->getCode());
+                Sentry::captureException($e);
+            });
+        }
+
+        parent::report($e); 
     }
 }

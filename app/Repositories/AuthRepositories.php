@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
+use Sentry;
 use App\Service\ResponseJsonService;
 use App\Models\User;
 
@@ -37,6 +38,7 @@ class AuthRepositories
             $data = $this->guard()->user();
             return $this->responseJsonService->success($data);
         } catch (\Exception $th) {
+            Sentry::captureException($e);
             return $this->responseJsonService->failed($e->getMessage());
         }
     }
@@ -47,6 +49,7 @@ class AuthRepositories
             $this->guard()->logout();
             return $this->responseJsonService->success('Successfully logged out');
         } catch (\Exception $th) {
+            Sentry::captureException($e);
             return $this->responseJsonService->failed($e->getMessage());
         }
     }
@@ -76,6 +79,7 @@ class AuthRepositories
             return $this->responseJsonService->success('Successfully register');
         } catch (\Exception $e) {
             DB::rollback();
+            Sentry::captureException($e);
             return $this->responseJsonService->failed($e->getMessage());
         }
     }
@@ -84,11 +88,8 @@ class AuthRepositories
     {
         try {
             return $this->respondWithToken($this->guard()->refresh());
-        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return $this->responseJsonService->failed($e->getMessage(),401);
-        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return $this->responseJsonService->failed($e->getMessage(),401);
         }catch (\Exception $e) {
+            Sentry::captureException($e);
             return $this->responseJsonService->failed($e->getMessage());
         }
     }

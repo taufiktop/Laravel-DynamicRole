@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Sentry;
 use App\Service\ResponseJsonService;
 
 class RequestApiMiddleware
@@ -35,7 +36,9 @@ class RequestApiMiddleware
         ];
         
         if($API_KEY != $request->header('APIKey')){
-            return $this->responseJsonService->failed('Invalid Key',401);
+            $message = 'Invalid Key';
+            Sentry::captureMessage($message);
+            return $this->responseJsonService->failed($message,401);
         }
 
         if($preventAttack['Content-Type'] != $request->header('Content-Type')
@@ -44,7 +47,9 @@ class RequestApiMiddleware
             || $preventAttack['Strict-Transport-Security'] != $request->header('Strict-Transport-Security')
             || $preventAttack['X-Frame-Options'] != $request->header('X-Frame-Options')
         ) {
-            return $this->responseJsonService->failed('Forbidden',403);
+            $message = 'Forbidden';
+            Sentry::captureMessage($message);
+            return $this->responseJsonService->failed($message,403);
         }
 
         return $next($request);

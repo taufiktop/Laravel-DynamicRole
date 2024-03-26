@@ -22,7 +22,7 @@ Route::middleware('api')->group(function () {
     Route::post('/send-otp', 'Otp\OtpController@sendOtp')->name('send-otp'); 
     Route::post('/verify-otp', 'Otp\OtpController@verifyOtp')->name('verify-otp'); 
     Route::get('/refresh', 'Auth\AuthController@refresh'); //refresh token
-
+    
     Route::middleware('jwt.verify')->group(function() {
         // Menu
         Route::post('/get-list-menu', 'MenuController@getListMenu');

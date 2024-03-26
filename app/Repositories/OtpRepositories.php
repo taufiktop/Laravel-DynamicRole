@@ -8,6 +8,7 @@ use App\Service\ResponseJsonService;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
+use Sentry;
 use App\Models\User;
 
 class OtpRepositories
@@ -42,6 +43,7 @@ class OtpRepositories
 
             return $this->responseJsonService->success();
         } catch (\Exception $e) {
+            Sentry::captureException($e);
             return $this->responseJsonService->failed($e->getMessage(), $e->getStatusCode());
         }
     }
@@ -65,10 +67,14 @@ class OtpRepositories
             }
             else
             {
-                return $this->responseJsonService->failed('Expired Otp');
+                $message = 'Expired Otp';
+                Sentry::captureException($message);
+                return $this->responseJsonService->failed($message);
             }
         } else {
-            return $this->responseJsonService->failed('Invalid Otp');
+            $message = 'Invalid Otp';
+            Sentry::captureException($message);
+            return $this->responseJsonService->failed($message);
         }
     }
 
