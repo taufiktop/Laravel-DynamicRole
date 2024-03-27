@@ -12,9 +12,6 @@ class OrderController extends Controller
     public function __construct(OrderRepositories $orderRepositories)
     {
         $this->orderRepositories = $orderRepositories;
-        $this->middleware(['permission:read orders']);
-        $this->middleware(['permission:create orders'])->only('create');
-        $this->middleware(['permission:update orders'])->only('cancel','checkout');
     }
 
     public function index ()

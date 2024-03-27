@@ -33,7 +33,6 @@ class JwtMiddleware extends BaseMiddleware
             $user = JWTAuth::parseToken()->authenticate();
         } catch (Exception $e) {
             Sentry::captureException($e);
-            $this->sentryService->report($e);
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
                 return $this->responseJsonService->failed('Token is Invalid',401);
             } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
@@ -52,7 +51,8 @@ class JwtMiddleware extends BaseMiddleware
     }
 
     private function unauthorized(){
-        Sentry::captureException($e);
-        return $this->responseJsonService->failed('Authorization Token not found',401);
+        $message = 'Authorization Token not found';
+        Sentry::captureException($message);
+        return $this->responseJsonService->failed($message,401);
     }
 }

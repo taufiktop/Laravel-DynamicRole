@@ -38,6 +38,10 @@ Route::middleware('api')->group(function () {
         //Order
         Route::get('/get-list-order', 'OrderController@getListOrder');
         Route::get('/get-detail-order', 'OrderController@getDetailOrder');
+
+        //Example Http Client
+        Route::get('/example-get/{uuid}', 'ExampleController@get');
+        Route::post('/example-post', 'ExampleController@post');
     });
     
 });

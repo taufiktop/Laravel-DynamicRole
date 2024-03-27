@@ -22,23 +22,4 @@ class ResponseJsonService
         ), $status);
     }
 
-    // public function success1($message = 'Success')
-    // {
-    //     return response()->json(array(
-    //         'items' => $data,
-    //         'page_size' => 10,
-    //         'page'  => 1,
-    //         'total' => 120
-    //     ), 200);
-    // }
-
-    // public function error($message = 'Error')
-    // {
-    //     return response()->json(array(
-    //         'error' => [
-    //             'code' => 'SY-401',
-    //             'message'  => 1
-    //         ]
-    //     ), 500);
-    // }
 }
